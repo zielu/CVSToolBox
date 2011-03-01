@@ -1,0 +1,67 @@
+<!--
+  ~ CVSToolBox IntelliJ IDEA Plugin
+  ~
+  ~ Copyright (C) 2011, Łukasz Zieliński
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  ~ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  ~ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  ~ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  ~ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  ~ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  ~
+  ~ This plugin uses
+  ~ FAMFAMFAM Silk Icons http://www.famfamfam.com/lab/icons/silk
+  -->
+
+<idea-plugin version="2">
+    <name>CVSToolBox</name>
+    <description>
+        Expands CVS integration by providing additional operations.
+    </description>
+    <version>1.0</version>
+    <vendor email="zieluuuu@gmail.com">Łukasz Zieliński</vendor>
+    <idea-version since-build="99.5"/>
+    <!-- dependencies -->
+    <depends>CVS</depends>
+    <category>VCS Integration</category>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+        <component>
+            <implementation-class>org.cvstoolbox.multitag.MultiTagConfiguration</implementation-class>
+        </component>
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="CVSToolBox.CreateMultiTag" class="org.cvstoolbox.multitag.MultiTagAction"
+                text="Create Multiple Tags..." icon="/org/cvstoolbox/resources/tag_green.png"
+                description="Create multiple tags in CVS repository for file">
+            <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateTag"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <checkinHandlerFactory implementation="org.cvstoolbox.multitag.MultiTagCheckinHandlerFactory"/>
+    </extensions>
+    <change-notes>
+    <![CDATA[
+    <ul>
+      <li><b>1.0</b>
+        <ol>
+          <li>Initial plugin release.</li>
+          <li>'Create multiple tags' context action</li>
+          <li>'Multitag commited files' after commit action</li>
+        </ol>
+      </li>
+    </ul>
+    ]]>
+  </change-notes>
+</idea-plugin>

@@ -86,47 +86,48 @@ public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
                         files.toArray(new VirtualFile[files.size()]), checkinPanel.getTagNames(),
                         checkinPanel.getOverrideExisting(),
                         CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY, project);
+                if (handler != null) {
+                    final Task.Backgroundable task = new Task.Backgroundable(project,
+                            "CVS Create Tag", false, new PerformInBackgroundOption() {
+                                @Override
+                                public boolean shouldStartInBackground() {
+                                    return false;
+                                }
 
-                final Task.Backgroundable task = new Task.Backgroundable(project,
-                        "CVS Create Tag", false, new PerformInBackgroundOption() {
-                            @Override
-                            public boolean shouldStartInBackground() {
-                                return false;
-                            }
+                                @Override
+                                public void processSentToBackground() {
+                                }
+                            }) {
+                        private List<VcsException> errors = Collections.emptyList();
 
-                            @Override
-                            public void processSentToBackground() {
-                            }
-                        }) {
-                    private List<VcsException> errors = Collections.emptyList();
-
-                    public void run(@NotNull final ProgressIndicator indicator) {
-                        indicator.setIndeterminate(true);
-                        final CvsOperationExecutor executor = new CvsOperationExecutor(project);
-                        executor.performActionSync(handler, CvsOperationExecutorCallback.EMPTY);
-                        errors = executor.getResult().getErrors();
-                    }
-
-                    @Nullable
-                    public NotificationInfo getNotificationInfo() {
-                        String text = " Tags Created";
-                        if (errors.size() > 0) {
-                            text += ", " + errors.size() + " Tag(s) Failed To Create";
+                        public void run(@NotNull final ProgressIndicator indicator) {
+                            indicator.setIndeterminate(true);
+                            final CvsOperationExecutor executor = new CvsOperationExecutor(project);
+                            executor.performActionSync(handler, CvsOperationExecutorCallback.EMPTY);
+                            errors = executor.getResult().getErrors();
                         }
-                        return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", text, true);
-                    }
-                };
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            ProgressManager.getInstance().run(task);
+
+                        @Nullable
+                        public NotificationInfo getNotificationInfo() {
+                            String text = " Tags Created";
+                            if (errors.size() > 0) {
+                                text += ", " + errors.size() + " Tag(s) Failed To Create";
+                            }
+                            return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", text, true);
                         }
-                    });
-                } catch (InterruptedException e) {
-                    LOG.error("Tag failed", e);
-                } catch (InvocationTargetException e) {
-                    LOG.error("Tag failed", e);
+                    };
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
+                            @Override
+                            public void run() {
+                                ProgressManager.getInstance().run(task);
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        LOG.error("Tag failed", e);
+                    } catch (InvocationTargetException e) {
+                        LOG.error("Tag failed", e);
+                    }
                 }
             }
 

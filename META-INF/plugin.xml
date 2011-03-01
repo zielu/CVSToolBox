@@ -20,9 +20,9 @@
     <description>
         Expands CVS integration by providing additional operations.
     </description>
-    <version>1.0</version>
+    <version>1.01</version>
     <vendor email="zieluuuu@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="99.5"/>
+    <idea-version since-build="99.5" until-build="103.72"/>
     <!-- dependencies -->
     <depends>CVS</depends>
     <category>VCS Integration</category>
@@ -54,6 +54,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.01</b>
+        <ol>
+          <li>Fixed error in 'Multitag commited files' with empty directory.</li>
+        </ol>
+      </li>
       <li><b>1.0</b>
         <ol>
           <li>Initial plugin release.</li>

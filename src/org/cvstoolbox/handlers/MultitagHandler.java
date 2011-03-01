@@ -29,14 +29,13 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.cvstoolbox.cvsoperations.BranchOperationEx;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Lukasz
- * Date: 18.01.11
- * Time: 20:38
- * To change this template use File | Settings | File Templates.
+ * @author Łukasz Zieliński
  */
 public class MultitagHandler {
 
@@ -59,12 +58,26 @@ public class MultitagHandler {
     public static CvsHandler createTagsHandler(VirtualFile[] selectedFiles, Collection<String> tagNames,
                                                boolean overrideExisting,
                                                boolean makeNewFilesReadOnly, Project project) {
-        CompositeOperaton operation = new CompositeOperaton();
-        for (String tagName : tagNames) {
-            operation.addOperation(new BranchOperationEx(selectedFiles, tagName, overrideExisting, true));
+        List<VirtualFile> files = new ArrayList<VirtualFile>(Arrays.asList(selectedFiles));
+        List<VirtualFile> toRemove = new ArrayList<VirtualFile>();
+        for (VirtualFile file : files) {
+            if (file.isDirectory() && file.getChildren().length == 1 &&
+                file.getChildren()[0].isDirectory() && "CVS".equals(file.getChildren()[0].getName())) {
+                toRemove.add(file);
+            }
         }
-        return new CommandCvsHandler(CvsBundle.message("operation.name.create.tag"),
-                operation,
-                FileSetToBeUpdated.selectedFiles(selectedFiles));
+        files.removeAll(toRemove);
+        if (!files.isEmpty()) {
+            VirtualFile[] toTag = files.toArray(new VirtualFile[files.size()]);
+            CompositeOperaton operation = new CompositeOperaton();
+            for (String tagName : tagNames) {
+                operation.addOperation(new BranchOperationEx(toTag, tagName, overrideExisting, true));
+            }
+            return new CommandCvsHandler(CvsBundle.message("operation.name.create.tag"),
+                    operation,
+                    FileSetToBeUpdated.selectedFiles(toTag));
+        } else {
+            return null;
+        }
     }
 }

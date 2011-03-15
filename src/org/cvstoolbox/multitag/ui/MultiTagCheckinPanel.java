@@ -18,7 +18,6 @@
 package org.cvstoolbox.multitag.ui;
 
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
-import com.intellij.ui.components.JBScrollPane;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
 import org.jetbrains.annotations.NonNls;

@@ -22,7 +22,7 @@
     </description>
     <version>1.01</version>
     <vendor email="zieluuuu@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="99.5"/>
+     <idea-version since-build="95.627" until-build="95.627"/>
     <!-- dependencies -->
     <depends>CVS</depends>
     <category>VCS Integration</category>

@@ -33,7 +33,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.MultiLineLabelUI;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.components.JBList;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.ExistingTagsProvider;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
@@ -66,7 +65,7 @@ import java.util.List;
 public class MultiTagsSelection {
     private JPanel content;
     private JPanel buttonPanel;
-    private JBList tagsList;
+    private JList tagsList;
     private JScrollPane tagsListScroll;
     private EventList<String> tagsListContent;
     private EventList<String> tagsSelection;
@@ -87,8 +86,7 @@ public class MultiTagsSelection {
     public MultiTagsSelection() {
         tagsListContent = new SortedList<String>(new UniqueList<String>(
                 new BasicEventList<String>()), new StringComparator(true));
-        tagsList = new JBList(new EventListModel<String>(tagsListContent));
-        tagsList.getEmptyText().setText("Add available tags ->");
+        tagsList = new JList(new EventListModel<String>(tagsListContent));
         EventSelectionModel<String> tagsSelectionModel = new EventSelectionModel<String>(tagsListContent);
         tagsSelection = tagsSelectionModel.getSelected();
         tagsList.setSelectionModel(tagsSelectionModel);
@@ -204,7 +202,7 @@ public class MultiTagsSelection {
                     }
                     int result = Messages.showYesNoDialog(content,
                             message.toString(), title, Messages.getQuestionIcon());
-                    if (result == Messages.OK) {
+                    if (result == DialogWrapper.OK_EXIT_CODE) {
                         tagsListContent.removeAll(names);
                         saveConfiguration();
                         tagsList.requestFocusInWindow();

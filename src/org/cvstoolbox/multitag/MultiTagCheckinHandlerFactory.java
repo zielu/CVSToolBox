@@ -29,6 +29,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -73,7 +74,13 @@ public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
             @Nullable
             public RefreshableOnComponent getAfterCheckinConfigurationPanel(Disposable parentDisposable) {
                 checkinPanel = null;
-                if (panel.vcsIsAffected("CVS")) {
+                boolean isCvs = false;
+                for (AbstractVcs vcs : panel.getAffectedVcses()) {
+                    if (vcs.getName().equals("CVS")) {
+                        isCvs = true;
+                    }
+                }
+                if (isCvs) {
                     MultiTagConfiguration configuration = panel.getProject().getComponent(MultiTagConfiguration.class);
                     checkinPanel = new MultiTagCheckinPanel(configuration);
                     return checkinPanel;

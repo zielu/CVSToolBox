@@ -57,6 +57,7 @@
       <li><b>1.01</b>
         <ol>
           <li>Fixed error in 'Multitag commited files' with empty directory.</li>
+          <li>Fixed exception when invoked in "Create patch' context.</li>
         </ol>
       </li>
       <li><b>1.0</b>

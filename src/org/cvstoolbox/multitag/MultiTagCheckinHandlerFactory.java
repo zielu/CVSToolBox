@@ -41,6 +41,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.log4j.Logger;
 import org.cvstoolbox.handlers.MultitagHandler;
 import org.cvstoolbox.multitag.ui.MultiTagCheckinPanel;
+import org.cvstoolbox.util.EDTInvoker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,18 +117,13 @@ public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
                             return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", text, true);
                         }
                     };
-                    try {
-                        SwingUtilities.invokeAndWait(new Runnable() {
-                            @Override
-                            public void run() {
-                                ProgressManager.getInstance().run(task);
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                        LOG.error("Tag failed", e);
-                    } catch (InvocationTargetException e) {
-                        LOG.error("Tag failed", e);
-                    }
+
+                    EDTInvoker.invokeAndWaitNoExceptions(new Runnable() {
+                        @Override
+                        public void run() {
+                            ProgressManager.getInstance().run(task);
+                        }
+                    });
                 }
             }
 

@@ -18,10 +18,15 @@
 <idea-plugin version="2">
     <name>CVSToolBox</name>
     <description>
-        Expands CVS integration by providing additional operations.
+    <![CDATA[
+    <p>Expands CVS integration by providing additional operations:</p>
+    <ol>
+        <li>'Create multiple tags' - context and after commit action</li>
+    </ol>
+    ]]>
     </description>
     <version>1.01</version>
-    <vendor email="zieluuuu@gmail.com">Łukasz Zieliński</vendor>
+    <vendor email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="99.5"/>
     <!-- dependencies -->
     <depends>CVS</depends>

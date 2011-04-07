@@ -53,8 +53,8 @@ public class Filters {
         List<VirtualFile> files = new ArrayList<VirtualFile>(toPrune);
         List<VirtualFile> toRemove = new ArrayList<VirtualFile>(files.size());
         for (VirtualFile file : files) {
-            if (file.isDirectory() && file.getChildren().length == 1 &&
-                    file.getChildren()[0].getName().equals(CvsUtil.CVS)) {
+            if (file.isDirectory() && file.getChildren().length == 1 && file.getChildren()[0].isDirectory() &&
+                    CvsUtil.CVS.equals(file.getChildren()[0].getName())) {
                 toRemove.add(file);
             }
         }

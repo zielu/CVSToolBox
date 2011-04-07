@@ -22,10 +22,14 @@
     <p>Expands CVS integration by providing additional operations:</p>
     <ol>
         <li>'Create multiple tags' - context and after commit action</li>
+        <li>'Create move/branch' - context action</li>
     </ol>
+    <p>
+    This plugin uses FAMFAMFAM Silk Icons http://www.famfamfam.com/lab/icons/silk
+    </p>
     ]]>
     </description>
-    <version>1.01</version>
+    <version>1.02</version>
     <vendor email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="99.5"/>
     <!-- dependencies -->
@@ -50,6 +54,11 @@
                 description="Create multiple tags in CVS repository for file">
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateTag"/>
         </action>
+        <action id="CVSToolBox.CreateMoveMultiBranch" class="org.cvstoolbox.multitag.MultiBranchAction"
+                text="Create/Move Branch..." icon=""
+                description="Create/move branch in CVS repository for file">
+            <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateBranch"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -59,10 +68,15 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.02</b>
+        <ol>
+          <li>'Create move/branch' context action</li>
+        </ol>
+      </li>
       <li><b>1.01</b>
         <ol>
-          <li>Fixed error in 'Multitag commited files' with empty directory.</li>
-          <li>Fixed exception when invoked in "Create patch' context.</li>
+          <li>Fixed error in 'Multitag commited files' with empty directory</li>
+          <li>Fixed exception when invoked in "Create patch' context</li>
         </ol>
       </li>
       <li><b>1.0</b>

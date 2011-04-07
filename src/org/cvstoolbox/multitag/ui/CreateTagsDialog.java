@@ -42,10 +42,10 @@ public class CreateTagsDialog extends CvsTagDialog {
     private final Project project;
     private final Collection<FilePath> files;
 
-    private JPanel myPanel;
-    private JCheckBox myOverrideExisting;
-    private JCheckBox mySwitchToThisTag;
-    private JComboBox mySwitchToThisTagCombo;
+    private final JPanel myPanel;
+    private final JCheckBox myOverrideExisting;
+    private final JCheckBox mySwitchToThisTag;
+    private final JComboBox mySwitchToThisTagCombo;
     private final MultiTagsSelection tagsSelection;
 
     public CreateTagsDialog(final Collection<FilePath> files, final Project project) {

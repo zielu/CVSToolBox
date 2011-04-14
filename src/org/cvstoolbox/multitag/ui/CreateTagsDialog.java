@@ -26,6 +26,8 @@ import com.intellij.openapi.vcs.FilePath;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.ExistingTagsProvider;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
+import org.cvstoolbox.multitag.config.TagsConfiguration;
+import org.cvstoolbox.multitag.res.ResProvider;
 import org.cvstoolbox.util.CvsHelper;
 
 import javax.swing.JCheckBox;
@@ -51,7 +53,7 @@ public class CreateTagsDialog extends CvsTagDialog {
     public CreateTagsDialog(final Collection<FilePath> files, final Project project) {
         this.project = project;
         this.files = files;
-        tagsSelection = new MultiTagsSelection();
+        tagsSelection = new MultiTagsSelection(ResProvider.getTagsRes());
         tagsSelection.enableExistingTagsSelection(new ExistingTagsProvider() {
             @Override
             public String getExistingTag() {
@@ -90,7 +92,7 @@ public class CreateTagsDialog extends CvsTagDialog {
         updateSwitchToThisTagCombo();
     }
 
-    public void setConfiguration(MultiTagConfiguration configuration) {
+    public void setConfiguration(TagsConfiguration configuration) {
         tagsSelection.setConfiguration(configuration);
     }
 
@@ -100,9 +102,10 @@ public class CreateTagsDialog extends CvsTagDialog {
     }
 
     private void updateSwitchToThisTagCombo() {
+        mySwitchToThisTag.setEnabled(!tagsSelection.getTagSelection().isEmpty());
         mySwitchToThisTagCombo.setModel(new EventComboBoxModel<String>(tagsSelection.getTagSelection()));
-        mySwitchToThisTagCombo.setEnabled(mySwitchToThisTag.isSelected());
-        if (mySwitchToThisTag.isEnabled()) {
+        mySwitchToThisTagCombo.setEnabled(mySwitchToThisTag.isEnabled() && mySwitchToThisTag.isSelected());
+        if (mySwitchToThisTagCombo.isEnabled()) {
             if (mySwitchToThisTagCombo.getSelectedIndex() == - 1 && mySwitchToThisTagCombo.getItemCount() > 0) {
                 mySwitchToThisTagCombo.setSelectedIndex(0);
             }
@@ -138,7 +141,7 @@ public class CreateTagsDialog extends CvsTagDialog {
     }
 
     public boolean switchToThisBranch() {
-        return mySwitchToThisTag.isSelected() && (mySwitchToThisTagCombo.getSelectedIndex() != -1);
+        return mySwitchToThisTag.isEnabled() && mySwitchToThisTag.isSelected() && (mySwitchToThisTagCombo.getSelectedIndex() != -1);
     }
 
     public boolean tagFieldIsActive() {

@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.actions.VcsContext;
 import org.cvstoolbox.handlers.MultitagHandler;
+import org.cvstoolbox.multitag.config.TagsConfig;
 import org.cvstoolbox.multitag.ui.CreateTagsDialog;
 
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class MultiTagAction extends ActionOnSelectedElement {
         Project project = context.getProject();
         MultiTagConfiguration configuration = project.getComponent(MultiTagConfiguration.class);
         CreateTagsDialog dialog = new CreateTagsDialog(Arrays.asList(selectedFiles), project);
-        dialog.setConfiguration(configuration);
+        dialog.setConfiguration(TagsConfig.adaptAsTags(configuration));
         dialog.show();
         //save available tags
         if (!dialog.isOK()) {

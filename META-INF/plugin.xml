@@ -22,7 +22,7 @@
     <p>Expands CVS integration by providing additional operations:</p>
     <ol>
         <li>'Create multiple tags' - context and after commit action</li>
-        <li>'Create move/branch' - context action</li>
+        <li>'Create/Move branches' - context action</li>
     </ol>
     <p>
     This plugin uses FAMFAMFAM Silk Icons http://www.famfamfam.com/lab/icons/silk
@@ -55,8 +55,8 @@
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateTag"/>
         </action>
         <action id="CVSToolBox.CreateMoveMultiBranch" class="org.cvstoolbox.multitag.MultiBranchAction"
-                text="Create/Move Branch..." icon=""
-                description="Create/move branch in CVS repository for file">
+                text="Create/Move Branches..." icon=""
+                description="Create/move branches in CVS repository for file">
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateBranch"/>
         </action>
     </actions>
@@ -68,9 +68,9 @@
     <change-notes>
     <![CDATA[
     <ul>
-      <li><b>1.02</b>
+      <li><b>1.1</b>
         <ol>
-          <li>'Create move/branch' context action</li>
+          <li>'Create/Move branches' context action</li>
         </ol>
       </li>
       <li><b>1.01</b>

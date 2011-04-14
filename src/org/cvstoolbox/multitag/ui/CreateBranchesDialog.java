@@ -17,6 +17,7 @@
 
 package org.cvstoolbox.multitag.ui;
 
+import ca.odell.glazedlists.swing.EventComboBoxModel;
 import com.intellij.CvsBundle;
 import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.TagsHelper;
 import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.ui.CvsTagDialog;
@@ -28,11 +29,18 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.miginfocom.swing.MigLayout;
+import org.cvstoolbox.multitag.ExistingTagsProvider;
+import org.cvstoolbox.multitag.config.TagsConfiguration;
+import org.cvstoolbox.multitag.res.ResProvider;
+import org.cvstoolbox.util.CvsHelper;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -43,53 +51,77 @@ import java.util.HashSet;
  */
 public class CreateBranchesDialog extends CvsTagDialog {
     private final JPanel myPanel;
-    private final TextFieldWithBrowseButton myTagName;
     private final JCheckBox myOverrideExisting;
     private final JCheckBox mySwitchToThisTag;
-    private final JLabel myBranchLabel;
-    private final JLabel myErrorLabel;
+    private final JComboBox mySwitchToThisTagCombo;
+    private final MultiTagsSelection tagsSelection;
 
     public CreateBranchesDialog(final Collection<FilePath> files, final Project project) {
-        myBranchLabel = new JLabel(CvsBundle.message("label.branch.name"));
-        myErrorLabel = new JLabel();
-        mySwitchToThisTag = new JCheckBox(CvsBundle.message("checkbox.switch.to.this.branch"));
-        myOverrideExisting = new JCheckBox("Override existing/allow move branch (-F -B)");
-        myTagName = new TextFieldWithBrowseButton();
-        myTagName.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String branchName = TagsHelper.chooseBranch(collectVcsRoots(project, files), project, false);
-                if (branchName != null) {
-                    myTagName.setText(branchName);
-                }
+        tagsSelection = new MultiTagsSelection(ResProvider.getBranchesRes());
+        tagsSelection.enableExistingTagsSelection(new ExistingTagsProvider() {
+            @Override
+            public String getExistingTag() {
+                return TagsHelper.chooseBranch(CvsHelper.collectVcsRoots(project, files), project, false);
             }
         });
+        mySwitchToThisTag = new JCheckBox(CvsBundle.message("checkbox.switch.to.this.branch"));
+        mySwitchToThisTagCombo = new JComboBox(new EventComboBoxModel<String>(tagsSelection.getTagSelection()));
+        myOverrideExisting = new JCheckBox("Override existing/allow move branch (-F -B)");
 
         myPanel = new JPanel(new MigLayout("fill, insets 0 0 0 0, hidemode 2"));
-        myPanel.add(myBranchLabel, "");
-        myPanel.add(myTagName, "spanx, growx, pushx, wrap");
-        myPanel.add(myErrorLabel, "spanx, wrap");
+        myPanel.add(tagsSelection.getComponent(), "growx, pushx, growy, pushy, wrap");
         myPanel.add(myOverrideExisting, "spanx, wrap");
-        myPanel.add(mySwitchToThisTag, "spanx, wrap");
+        myPanel.add(mySwitchToThisTag, "split 2");
+        myPanel.add(mySwitchToThisTagCombo, "spanx, growx, wrap");
 
         setTitle("Create/Move Branch");
 
-        CvsFieldValidator.installOn(this, myTagName.getTextField(), myErrorLabel);
+        tagsSelection.addTagListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                updateSwitchToThisTagCombo();
+                setOkStatus();
+            }
+        });
+
+        mySwitchToThisTag.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateSwitchToThisTagCombo();
+            }
+        });
+
         init();
+        setOkStatus();
+        updateSwitchToThisTagCombo();
     }
 
-    public static Collection<FilePath> collectVcsRoots(final Project project, final Collection<FilePath> files) {
-        Collection<FilePath> result = new HashSet<FilePath>();
-        for (FilePath filePath : files) {
-            final VirtualFile root = ProjectLevelVcsManager.getInstance(project).getVcsRootFor(filePath);
-            if (root != null) {
-                result.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(root));
+    private void setOkStatus() {
+        boolean noSelection = getTagNames().isEmpty();
+        setOKActionEnabled(!noSelection);
+    }
+
+    private void updateSwitchToThisTagCombo() {
+        mySwitchToThisTag.setEnabled(!tagsSelection.getTagSelection().isEmpty());
+        mySwitchToThisTagCombo.setModel(new EventComboBoxModel<String>(tagsSelection.getTagSelection()));
+        mySwitchToThisTagCombo.setEnabled(mySwitchToThisTag.isEnabled() && mySwitchToThisTag.isSelected());
+        if (mySwitchToThisTagCombo.isEnabled()) {
+            if (mySwitchToThisTagCombo.getSelectedIndex() == - 1 && mySwitchToThisTagCombo.getItemCount() > 0) {
+                mySwitchToThisTagCombo.setSelectedIndex(0);
             }
         }
-        return result;
     }
 
-    public String getTagName() {
-        return myTagName.getText();
+    public void setConfiguration(TagsConfiguration configuration) {
+        tagsSelection.setConfiguration(configuration);
+    }
+
+    public Collection<String> getTagNames() {
+        return tagsSelection.getTagNames();
+    }
+
+    public String getSwitchToBranchName() {
+        return (String) mySwitchToThisTagCombo.getSelectedItem();
     }
 
     public boolean getOverrideExisting() {
@@ -101,7 +133,7 @@ public class CreateBranchesDialog extends CvsTagDialog {
     }
 
     public JComponent getPreferredFocusedComponent() {
-        return myTagName.getTextField();
+        return tagsSelection.getPreferredFocusedComponent();
     }
 
     protected String getDimensionServiceKey() {
@@ -109,7 +141,7 @@ public class CreateBranchesDialog extends CvsTagDialog {
     }
 
     public boolean switchToThisBranch() {
-        return mySwitchToThisTag.isSelected();
+        return mySwitchToThisTag.isEnabled() && mySwitchToThisTag.isSelected() && (mySwitchToThisTagCombo.getSelectedIndex() != -1);
     }
 
     public boolean tagFieldIsActive() {

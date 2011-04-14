@@ -56,14 +56,18 @@ public class MultitagHandler {
                 FileSetToBeUpdated.selectedFiles(selectedFiles));
     }
 
-    public static CvsHandler createBranchesHandler(FilePath[] selectedFiles, String branchName,
-                                                   boolean switchToThisAction, boolean overrideExisting,
+    public static CvsHandler createBranchesHandler(FilePath[] selectedFiles, Collection<String> branchNames,
+                                                   boolean switchToThisAction, String switchToBranch,
+                                                   boolean overrideExisting,
                                                    boolean makeNewFilesReadOnly, Project project) {
         CompositeOperaton operation = new CompositeOperaton();
         boolean allowMoveDelete = overrideExisting;
-        operation.addOperation(new BranchOperationEx(selectedFiles, branchName, overrideExisting, false, allowMoveDelete));
+        for (String branchName : branchNames) {
+            operation.addOperation(new BranchOperationEx(selectedFiles, branchName, overrideExisting, false,
+                    allowMoveDelete));
+        }
         if (switchToThisAction) {
-            operation.addOperation(new UpdateOperation(selectedFiles, branchName, makeNewFilesReadOnly, project));
+            operation.addOperation(new UpdateOperation(selectedFiles, switchToBranch, makeNewFilesReadOnly, project));
         }
         return new CommandCvsHandler(CvsBundle.message("operation.name.create.branch"), operation,
                 FileSetToBeUpdated.selectedFiles(selectedFiles));

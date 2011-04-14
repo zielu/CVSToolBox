@@ -21,6 +21,8 @@ import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.ui.components.JBScrollPane;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
+import org.cvstoolbox.multitag.config.TagsConfig;
+import org.cvstoolbox.multitag.res.ResProvider;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.JCheckBox;
@@ -48,15 +50,15 @@ public class MultiTagCheckinPanel implements RefreshableOnComponent {
 
     public MultiTagCheckinPanel(MultiTagConfiguration configuration) {
         this.configuration = configuration;
-        this.tagsSelection = new MultiTagsSelection();
+        this.tagsSelection = new MultiTagsSelection(ResProvider.getTagsRes());
         content = new JPanel(new BorderLayout());
         JPanel center = new JPanel(new MigLayout("fillx"));
         selectionError = new JLabel();
 
-        center.add(myOverrideExisting, "spanx, growx, wrap");
         center.add(selectionError, "spanx, wrap");
+        tagsSelection.setAfterActionsComponent(myOverrideExisting);
         center.add(tagsSelection.getComponent(), "spanx, growx, pushx");
-        tagsSelection.setConfiguration(configuration);
+        tagsSelection.setConfiguration(TagsConfig.adaptAsTags(configuration));
         content.add(tag, BorderLayout.NORTH);
         content.add(center, BorderLayout.CENTER);
         tag.addActionListener(new ActionListener() {
@@ -98,7 +100,7 @@ public class MultiTagCheckinPanel implements RefreshableOnComponent {
     @Override
     public void refresh() {
         tag.setSelected(configuration.TAG_AFTER_PROJECT_COMMIT);
-        tagsSelection.setConfiguration(configuration);
+        tagsSelection.setConfiguration(TagsConfig.adaptAsTags(configuration));
         myOverrideExisting.setSelected(configuration.OVERRIDE_EXISTING_TAG_FOR_PROJECT);
         updateSelectionError();
         updateEnable();

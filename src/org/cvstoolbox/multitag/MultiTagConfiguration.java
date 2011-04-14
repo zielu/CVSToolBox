@@ -39,6 +39,10 @@ import java.util.List;
 public class MultiTagConfiguration implements PersistentStateComponent<MultiTagConfiguration> {
     public List<String> availableTags = new ArrayList<String>();
     public List<String> selectedTags = new ArrayList<String>();
+
+    public List<String> availableBranches = new ArrayList<String>();
+    public List<String> selectedBranches = new ArrayList<String>();
+
     public boolean TAG_AFTER_PROJECT_COMMIT = false;
     public boolean OVERRIDE_EXISTING_TAG_FOR_PROJECT = false;
 
@@ -55,10 +59,20 @@ public class MultiTagConfiguration implements PersistentStateComponent<MultiTagC
         this.selectedTags = new ArrayList<String>(selectedTags);
     }
 
+    public void setAvailableBranches(Collection<String> availableBranches) {
+        this.availableBranches = new ArrayList<String>(availableBranches);
+    }
+
+    public void setSelectedBranches(Collection<String> selectedBranches) {
+        this.selectedBranches = new ArrayList<String>(selectedBranches);
+    }
+
     @Override
     public void loadState(MultiTagConfiguration state) {
         setAvailableTags(state.availableTags);
         setSelectedTags(state.selectedTags);
+        setAvailableBranches(state.availableBranches);
+        setSelectedBranches(state.selectedBranches);
         TAG_AFTER_PROJECT_COMMIT = state.TAG_AFTER_PROJECT_COMMIT;
         OVERRIDE_EXISTING_TAG_FOR_PROJECT = state.OVERRIDE_EXISTING_TAG_FOR_PROJECT;
     }

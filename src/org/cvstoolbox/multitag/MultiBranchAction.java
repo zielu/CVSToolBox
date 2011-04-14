@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.actions.VcsContext;
 import org.cvstoolbox.handlers.MultitagHandler;
+import org.cvstoolbox.multitag.config.TagsConfig;
 import org.cvstoolbox.multitag.ui.CreateBranchesDialog;
 
 import java.util.Arrays;
@@ -50,14 +51,19 @@ public class MultiBranchAction extends ActionOnSelectedElement {
     protected CvsHandler getCvsHandler(CvsContext context) {
         FilePath[] selectedFiles = context.getSelectedFilePaths();
         Project project = context.getProject();
-        CreateBranchesDialog createBranchDialog = new CreateBranchesDialog(Arrays.asList(selectedFiles), project);
-        createBranchDialog.show();
-        if (!createBranchDialog.isOK()) return CvsHandler.NULL;
+        MultiTagConfiguration configuration = project.getComponent(MultiTagConfiguration.class);
+        CreateBranchesDialog dialog = new CreateBranchesDialog(Arrays.asList(selectedFiles), project);
+        dialog.setConfiguration(TagsConfig.adaptAsBranches(configuration));
+        dialog.show();
+        if (!dialog.isOK()) {
+            return CvsHandler.NULL;
+        }
 
         return MultitagHandler.createBranchesHandler(selectedFiles,
-                createBranchDialog.getTagName(),
-                createBranchDialog.switchToThisBranch(),
-                createBranchDialog.getOverrideExisting(),
+                dialog.getTagNames(),
+                dialog.switchToThisBranch(),
+                dialog.getSwitchToBranchName(),
+                dialog.getOverrideExisting(),
                 CvsConfiguration.getInstance(context.getProject()).MAKE_NEW_FILES_READONLY, project);
     }
 }

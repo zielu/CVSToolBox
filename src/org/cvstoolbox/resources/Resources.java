@@ -42,6 +42,10 @@ public class Resources {
         return new ImageIcon(getIconURL("tag_blue_delete.png"));
     }
 
+    public static Icon getEditTagIcon() {
+        return new ImageIcon(getIconURL("tag_blue_edit.png"));
+    }
+
     public static Icon getCrossIcon() {
         return new ImageIcon(getIconURL("cross.png"));
     }

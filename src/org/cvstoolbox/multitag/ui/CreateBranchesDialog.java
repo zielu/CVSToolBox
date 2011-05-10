@@ -66,7 +66,7 @@ public class CreateBranchesDialog extends CvsTagDialog {
         });
         mySwitchToThisTag = new JCheckBox(CvsBundle.message("checkbox.switch.to.this.branch"));
         mySwitchToThisTagCombo = new JComboBox(new EventComboBoxModel<String>(tagsSelection.getTagSelection()));
-        myOverrideExisting = new JCheckBox("Override existing/allow move branch (-F -B)");
+        myOverrideExisting = new JCheckBox("Override/move branch (-F -B)");
 
         myPanel = new JPanel(new MigLayout("fill, insets 0 0 0 0, hidemode 2"));
         myPanel.add(tagsSelection.getComponent(), "growx, pushx, growy, pushy, wrap");

@@ -25,11 +25,11 @@
         <li>'Create/Move branches' - context action</li>
     </ol>
     <p>
-    This plugin uses FAMFAMFAM Silk Icons http://www.famfamfam.com/lab/icons/silk
+    This plugin uses <a href="http://www.famfamfam.com/lab/icons/silk">FAMFAMFAM Silk Icons</a>
     </p>
     ]]>
     </description>
-    <version>1.02</version>
+    <version>1.1</version>
     <vendor email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="99.5"/>
     <!-- dependencies -->

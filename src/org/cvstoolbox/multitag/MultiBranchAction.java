@@ -27,19 +27,16 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.actions.VcsContext;
 import org.cvstoolbox.handlers.MultitagHandler;
 import org.cvstoolbox.multitag.config.TagsConfig;
-import org.cvstoolbox.multitag.ui.CreateTagsDialog;
+import org.cvstoolbox.multitag.ui.CreateBranchesDialog;
 
 import java.util.Arrays;
 
 /**
- * <p></p>
- * <br/>
- *
- * @author Lukasz Zielinski
+ * @author Łukasz Zieliński
  */
-public class MultiTagAction extends ActionOnSelectedElement {
+public class MultiBranchAction extends ActionOnSelectedElement {
 
-    public MultiTagAction() {
+    public MultiBranchAction() {
         super(true);
         CvsActionVisibility visibility = getVisibility();
         visibility.canBePerformedOnSeveralFiles();
@@ -48,25 +45,25 @@ public class MultiTagAction extends ActionOnSelectedElement {
     }
 
     protected String getTitle(VcsContext context) {
-        return "Create tags";
+        return "Create/Move Branch...";
     }
 
     protected CvsHandler getCvsHandler(CvsContext context) {
         FilePath[] selectedFiles = context.getSelectedFilePaths();
         Project project = context.getProject();
         MultiTagConfiguration configuration = project.getComponent(MultiTagConfiguration.class);
-        CreateTagsDialog dialog = new CreateTagsDialog(Arrays.asList(selectedFiles), project);
-        dialog.setConfiguration(TagsConfig.adaptAsTags(configuration));
+        CreateBranchesDialog dialog = new CreateBranchesDialog(Arrays.asList(selectedFiles), project);
+        dialog.setConfiguration(TagsConfig.adaptAsBranches(configuration));
         dialog.show();
-        //save available tags
         if (!dialog.isOK()) {
             return CvsHandler.NULL;
         }
-        //save selection on OK
-        configuration.setSelectedTags(dialog.getTagNames());
 
-        return MultitagHandler.createTagsHandler(selectedFiles, dialog.getTagNames(),
-                dialog.switchToThisBranch(), dialog.getSwitchToTagName(), dialog.getOverrideExisting(),
-                CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY, project);
+        return MultitagHandler.createBranchesHandler(selectedFiles,
+                dialog.getTagNames(),
+                dialog.switchToThisBranch(),
+                dialog.getSwitchToBranchName(),
+                dialog.getOverrideExisting(),
+                CvsConfiguration.getInstance(context.getProject()).MAKE_NEW_FILES_READONLY, project);
     }
 }

@@ -18,6 +18,7 @@
 package org.cvstoolbox.handlers;
 
 import com.intellij.CvsBundle;
+import com.intellij.cvsSupport2.CvsUtil;
 import com.intellij.cvsSupport2.cvshandlers.CommandCvsHandler;
 import com.intellij.cvsSupport2.cvshandlers.CvsHandler;
 import com.intellij.cvsSupport2.cvshandlers.FileSetToBeUpdated;
@@ -55,27 +56,34 @@ public class MultitagHandler {
                 FileSetToBeUpdated.selectedFiles(selectedFiles));
     }
 
+    public static CvsHandler createBranchesHandler(FilePath[] selectedFiles, Collection<String> branchNames,
+                                                   boolean switchToThisAction, String switchToBranch,
+                                                   boolean overrideExisting,
+                                                   boolean makeNewFilesReadOnly, Project project) {
+        CompositeOperaton operation = new CompositeOperaton();
+        boolean allowMoveDelete = overrideExisting;
+        for (String branchName : branchNames) {
+            operation.addOperation(new BranchOperationEx(selectedFiles, branchName, overrideExisting, false,
+                    allowMoveDelete));
+        }
+        if (switchToThisAction) {
+            operation.addOperation(new UpdateOperation(selectedFiles, switchToBranch, makeNewFilesReadOnly, project));
+        }
+        return new CommandCvsHandler(CvsBundle.message("operation.name.create.branch"), operation,
+                FileSetToBeUpdated.selectedFiles(selectedFiles));
+    }
+
     public static CvsHandler createTagsHandler(VirtualFile[] selectedFiles, Collection<String> tagNames,
                                                boolean overrideExisting,
                                                boolean makeNewFilesReadOnly, Project project) {
-        List<VirtualFile> files = new ArrayList<VirtualFile>(Arrays.asList(selectedFiles));
-        List<VirtualFile> toRemove = new ArrayList<VirtualFile>();
-        for (VirtualFile file : files) {
-            if (file.isDirectory() && file.getChildren().length == 1 &&
-                file.getChildren()[0].isDirectory() && "CVS".equals(file.getChildren()[0].getName())) {
-                toRemove.add(file);
-            }
-        }
-        files.removeAll(toRemove);
-        if (!files.isEmpty()) {
-            VirtualFile[] toTag = files.toArray(new VirtualFile[files.size()]);
+        if (selectedFiles.length > 0) {
             CompositeOperaton operation = new CompositeOperaton();
             for (String tagName : tagNames) {
-                operation.addOperation(new BranchOperationEx(toTag, tagName, overrideExisting, true));
+                operation.addOperation(new BranchOperationEx(selectedFiles, tagName, overrideExisting, true));
             }
             return new CommandCvsHandler(CvsBundle.message("operation.name.create.tag"),
                     operation,
-                    FileSetToBeUpdated.selectedFiles(toTag));
+                    FileSetToBeUpdated.selectedFiles(selectedFiles));
         } else {
             return null;
         }

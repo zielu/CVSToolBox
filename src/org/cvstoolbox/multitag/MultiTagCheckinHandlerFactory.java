@@ -22,8 +22,7 @@ import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutor;
 import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutorCallback;
 import com.intellij.cvsSupport2.cvshandlers.CvsHandler;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -31,30 +30,21 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
-import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.log4j.Logger;
+import org.cvstoolbox.filter.Filters;
 import org.cvstoolbox.handlers.MultitagHandler;
 import org.cvstoolbox.multitag.ui.MultiTagCheckinPanel;
 import org.cvstoolbox.util.EDTInvoker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.SwingUtilities;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +53,7 @@ import java.util.Map;
  * @author Łukasz Zieliński
  */
 public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
-    private final Logger LOG = Logger.getLogger(getClass());
+    private final Logger LOG = Logger.getInstance(getClass().getName());
 
     @NotNull
     public CheckinHandler createHandler(final CheckinProjectPanel panel) {
@@ -90,8 +80,9 @@ public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
             }
 
             private void tagFiles(Collection<VirtualFile> files, final Project project) {
+                VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
                 final CvsHandler handler = MultitagHandler.createTagsHandler(
-                        files.toArray(new VirtualFile[files.size()]), checkinPanel.getTagNames(),
+                        toTag, checkinPanel.getTagNames(),
                         checkinPanel.getOverrideExisting(),
                         CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY, project);
                 if (handler != null) {

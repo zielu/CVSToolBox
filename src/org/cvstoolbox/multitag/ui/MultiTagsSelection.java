@@ -270,7 +270,9 @@ public class MultiTagsSelection {
         ListSelectionModel selectionModel = tagsList.getSelectionModel();
         for (String selected : configuration.getSelected()) {
             int index = tagsListContent.indexOf(selected);
-            selectionModel.addSelectionInterval(index, index);
+            if (index > -1) {
+                selectionModel.addSelectionInterval(index, index);
+            }
         }
         setRemoveActionState();
     }

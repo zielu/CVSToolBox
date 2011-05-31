@@ -24,6 +24,7 @@ import com.intellij.cvsSupport2.cvshandlers.CvsHandler;
 import com.intellij.cvsSupport2.cvshandlers.FileSetToBeUpdated;
 import com.intellij.cvsSupport2.cvsoperations.common.CompositeOperaton;
 import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.BranchOperation;
+import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.TagOperation;
 import com.intellij.cvsSupport2.cvsoperations.cvsUpdate.UpdateOperation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
@@ -87,5 +88,13 @@ public class MultitagHandler {
         } else {
             return null;
         }
+    }
+
+    public static CvsHandler createRemoveTagsAction(VirtualFile[] selectedFiles, Collection<String> tagNames) {
+        CompositeOperaton operation = new CompositeOperaton();
+        for (String tagName : tagNames) {
+             operation.addOperation(new TagOperation(selectedFiles, tagName, true, false));
+        }
+        return new CommandCvsHandler(CvsBundle.message("action.name.delete.tag"),operation, FileSetToBeUpdated.EMPTY);
     }
 }

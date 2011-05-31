@@ -46,6 +46,8 @@ public class MultiTagConfiguration implements PersistentStateComponent<MultiTagC
     public boolean TAG_AFTER_PROJECT_COMMIT = false;
     public boolean OVERRIDE_EXISTING_TAG_FOR_PROJECT = false;
 
+    public List<String> deletedTags = new ArrayList<String>();
+
     @Override
     public MultiTagConfiguration getState() {
         return this;
@@ -67,6 +69,10 @@ public class MultiTagConfiguration implements PersistentStateComponent<MultiTagC
         this.selectedBranches = new ArrayList<String>(selectedBranches);
     }
 
+    public void setDeletedTags(Collection<String> deletedTags) {
+        this.deletedTags = new ArrayList<String>(deletedTags);
+    }
+
     @Override
     public void loadState(MultiTagConfiguration state) {
         setAvailableTags(state.availableTags);
@@ -75,5 +81,6 @@ public class MultiTagConfiguration implements PersistentStateComponent<MultiTagC
         setSelectedBranches(state.selectedBranches);
         TAG_AFTER_PROJECT_COMMIT = state.TAG_AFTER_PROJECT_COMMIT;
         OVERRIDE_EXISTING_TAG_FOR_PROJECT = state.OVERRIDE_EXISTING_TAG_FOR_PROJECT;
+        setDeletedTags(state.deletedTags);
     }
 }

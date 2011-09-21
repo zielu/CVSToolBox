@@ -23,13 +23,14 @@
     <ol>
         <li>'Create multiple tags' - context and after commit action</li>
         <li>'Create/Move branches' - context action</li>
+        <li>'Delete tags' - context action</li>
     </ol>
     <p>
     This plugin uses <a href="http://www.famfamfam.com/lab/icons/silk">FAMFAMFAM Silk Icons</a>
     </p>
     ]]>
     </description>
-    <version>1.1</version>
+    <version>1.2</version>
     <vendor email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="95.627" until-build="95.627"/>
     <!-- dependencies -->
@@ -59,6 +60,11 @@
                 description="Create/move branches in CVS repository for file">
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateBranch"/>
         </action>
+        <action id="CVSToolBox.DeleteTags" class="org.cvstoolbox.multitag.DeleteTagsAction"
+                text="Delete Tags..." icon=""
+                description="Delete tags in CVS repository for file">
+            <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.DeleteTag"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -68,6 +74,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.2</b>
+        <ol>
+          <li>'Delete Tags' context action</li>
+        </ol>
+      </li>
       <li><b>1.1</b>
         <ol>
           <li>'Create/Move branches' context action</li>

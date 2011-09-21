@@ -29,12 +29,12 @@ import ca.odell.glazedlists.swing.EventListModel;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.ui.CvsTagDialog;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.components.JBList;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
 import org.cvstoolbox.util.StringComparator;
 
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -50,7 +50,7 @@ public class DeleteTagsDialog extends CvsTagDialog {
     private final Collection<String> availableTags;
     private JPanel panel;
     private EventList<String> tagsListContent;
-    private JBList tagsList;
+    private JList tagsList;
     private JScrollPane tagsListScroll;
     private EventList<String> tagsSelection;
 
@@ -62,7 +62,7 @@ public class DeleteTagsDialog extends CvsTagDialog {
         tagsListContent = new SortedList<String>(new UniqueList<String>(
                 new BasicEventList<String>()), new StringComparator(true));
         tagsListContent.addAll(availableTags);
-        tagsList = new JBList(new EventListModel<String>(tagsListContent));
+        tagsList = new JList(new EventListModel<String>(tagsListContent));
         EventSelectionModel<String> tagsSelectionModel = new EventSelectionModel<String>(tagsListContent);
         tagsSelection = tagsSelectionModel.getSelected();
         tagsList.setSelectionModel(tagsSelectionModel);

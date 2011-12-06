@@ -61,7 +61,7 @@ public class CreateBranchesDialog extends CvsTagDialog {
         tagsSelection.enableExistingTagsSelection(new ExistingTagsProvider() {
             @Override
             public String getExistingTag() {
-                return TagsHelper.chooseBranch(CvsHelper.collectVcsRoots(project, files), project, false);
+                return TagsHelper.chooseBranch(CvsHelper.collectVcsRoots(project, files), project);
             }
         });
         mySwitchToThisTag = new JCheckBox(CvsBundle.message("checkbox.switch.to.this.branch"));

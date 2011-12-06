@@ -17,9 +17,11 @@
 
 package org.cvstoolbox.multitag;
 
+import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.project.Project;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +38,7 @@ import java.util.List;
       file = "$WORKSPACE_FILE$"
     )}
 )
-public class MultiTagConfiguration implements PersistentStateComponent<MultiTagConfiguration> {
+public class MultiTagConfiguration extends AbstractProjectComponent implements PersistentStateComponent<MultiTagConfiguration> {
     public List<String> availableTags = new ArrayList<String>();
     public List<String> selectedTags = new ArrayList<String>();
 
@@ -47,6 +49,10 @@ public class MultiTagConfiguration implements PersistentStateComponent<MultiTagC
     public boolean OVERRIDE_EXISTING_TAG_FOR_PROJECT = false;
 
     public List<String> deletedTags = new ArrayList<String>();
+
+    public MultiTagConfiguration() {
+        super(null);
+    }
 
     @Override
     public MultiTagConfiguration getState() {

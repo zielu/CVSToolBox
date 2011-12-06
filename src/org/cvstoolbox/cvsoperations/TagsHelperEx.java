@@ -57,8 +57,7 @@ public class TagsHelperEx {
     private static BranchesProvider getBranchesProvider(CvsOperation operation, Project project, boolean forTemporaryConfiguration) throws VcsException {
         LOG.assertTrue(operation instanceof BranchesProvider);
         CvsOperationExecutor executor = new CvsOperationExecutor(true, project,
-                new ModalityContextImpl(ModalityState.defaultModalityState(),
-                        forTemporaryConfiguration));
+                new ModalityContextImpl(ModalityState.defaultModalityState()));
         CommandCvsHandler handler = new CommandCvsHandler(CvsBundle.message("load.tags.operation.name"), operation, true) {
             public String getCancelButtonText() {
                 return CvsBundle.message("button.text.stop");
@@ -67,7 +66,7 @@ public class TagsHelperEx {
         executor.performActionSync(handler,
                 CvsOperationExecutorCallback.EMPTY);
         CvsResult executionResult = executor.getResult();
-        if (!executionResult.hasNoErrors()) {
+        if (executionResult.hasErrors()) {
             throw executionResult.composeError();
         }
         return (BranchesProvider) operation;

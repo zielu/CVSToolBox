@@ -57,7 +57,7 @@ public class CreateTagsDialog extends CvsTagDialog {
         tagsSelection.enableExistingTagsSelection(new ExistingTagsProvider() {
             @Override
             public String getExistingTag() {
-                return TagsHelper.chooseBranch(CvsHelper.collectVcsRoots(project, files), project, false);
+                return TagsHelper.chooseBranch(CvsHelper.collectVcsRoots(project, files), project);
             }
         });
         myOverrideExisting = new JCheckBox("Override existing (-F)");

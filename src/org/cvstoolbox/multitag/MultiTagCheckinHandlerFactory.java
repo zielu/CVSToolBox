@@ -17,6 +17,7 @@
 
 package org.cvstoolbox.multitag;
 
+import com.intellij.cvsSupport2.CvsVcs2;
 import com.intellij.cvsSupport2.config.CvsConfiguration;
 import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutor;
 import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutorCallback;
@@ -30,8 +31,11 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.VcsKey;
+import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
+import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.cvstoolbox.filter.Filters;
@@ -51,25 +55,24 @@ import java.util.Map;
 /**
  * @author Łukasz Zieliński
  */
-public class MultiTagCheckinHandlerFactory extends CheckinHandlerFactory {
+public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
     private final Logger LOG = Logger.getInstance(getClass().getName());
 
+    MultiTagCheckinHandlerFactory() {
+        super(CvsVcs2.getKey());
+    }
+
     @NotNull
-    public CheckinHandler createHandler(final CheckinProjectPanel panel) {
+    public CheckinHandler createVcsHandler(final CheckinProjectPanel panel) {
         //TODO: z panelu mozna wyciagnac jakie pliki zostaly wybrane
         return new CheckinHandler() {
             private MultiTagCheckinPanel checkinPanel;
 
             @Nullable
             public RefreshableOnComponent getAfterCheckinConfigurationPanel(Disposable parentDisposable) {
-                checkinPanel = null;
-                if (panel.vcsIsAffected("CVS")) {
-                    MultiTagConfiguration configuration = panel.getProject().getComponent(MultiTagConfiguration.class);
-                    checkinPanel = new MultiTagCheckinPanel(configuration);
-                    return checkinPanel;
-                } else {
-                    return null;
-                }
+                MultiTagConfiguration configuration = panel.getProject().getComponent(MultiTagConfiguration.class);
+                checkinPanel = new MultiTagCheckinPanel(configuration);
+                return checkinPanel;
             }
 
             private void tagFiles(Collection<VirtualFile> files, final Project project) {

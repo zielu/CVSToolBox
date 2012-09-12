@@ -145,7 +145,7 @@ public class MultiTagsSelection {
                     builder.setTitle(textResources.get(MultiTagsSelectionRes.Key.AddNewTitle));
                     JPanel content = new JPanel(new MigLayout("fillx"));
                     final JTextField tf = new JTextField();
-                    builder.setPreferedFocusComponent(tf);
+                    builder.setPreferredFocusComponent(tf);
                     JLabel errorLabel = new JLabel();
                     errorLabel.setUI(new MultiLineLabelUI());
 

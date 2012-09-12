@@ -30,9 +30,9 @@
     </p>
     ]]>
     </description>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
     <vendor email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="114.000" until-build="120.999"/>
+    <idea-version since-build="122.000" until-build="122.999"/>
     <!-- dependencies -->
     <depends>CVS</depends>
     <category>VCS Integration</category>
@@ -74,6 +74,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.4.4</b>
+        <ol>
+          <li>Compatible with latest Idea 12 EAP (122.x)</li>
+        </ol>
+      </li>
       <li><b>1.4.3</b>
         <ol>
           <li>Compatible with latest Idea 12 EAP</li>

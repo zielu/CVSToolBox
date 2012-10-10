@@ -19,6 +19,7 @@ package org.cvstoolbox.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
+import com.intellij.openapi.vcs.FilePathImpl;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,5 +41,13 @@ public class CvsHelper {
             }
         }
         return result;
+    }
+
+    public static FilePath[] toFilePaths(VirtualFile[] files) {
+        FilePath[] paths = new FilePath[files.length];
+        for (int i = 0; i < paths.length; i++) {
+            paths[i] = new FilePathImpl(files[i]);
+        }
+        return paths;
     }
 }

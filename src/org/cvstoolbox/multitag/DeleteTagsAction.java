@@ -64,7 +64,7 @@ public class DeleteTagsAction extends ActionOnSelectedElement {
                 if (deleteTagDialog.isOK()) {
                     Collection<String> tagNames = deleteTagDialog.getTagNames();
                     configuration.setDeletedTags(tagNames);
-                    return MultitagHandler.createRemoveTagsAction(context.getSelectedFiles(), tagNames);
+                    return MultitagHandler.createRemoveTagsAction(context.getSelectedFilePaths(), tagNames);
                 }
             }
             return CvsHandler.NULL;

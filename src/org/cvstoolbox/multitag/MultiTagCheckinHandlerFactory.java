@@ -41,6 +41,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.cvstoolbox.filter.Filters;
 import org.cvstoolbox.handlers.MultitagHandler;
 import org.cvstoolbox.multitag.ui.MultiTagCheckinPanel;
+import org.cvstoolbox.util.CvsHelper;
 import org.cvstoolbox.util.EDTInvoker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,7 +79,7 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
             private void tagFiles(Collection<VirtualFile> files, final Project project) {
                 VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
                 final CvsHandler handler = MultitagHandler.createTagsHandler(
-                        toTag, checkinPanel.getTagNames(),
+                        CvsHelper.toFilePaths(toTag), checkinPanel.getTagNames(),
                         checkinPanel.getOverrideExisting(),
                         CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY, project);
                 if (handler != null) {

@@ -27,8 +27,6 @@ import com.intellij.cvsSupport2.cvsoperations.cvsTagOrBranch.TagOperation;
 import com.intellij.cvsSupport2.cvsoperations.cvsUpdate.UpdateOperation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.cvstoolbox.cvsoperations.BranchOperationEx;
 
 import java.util.Collection;
 
@@ -43,7 +41,7 @@ public class MultitagHandler {
                                                boolean makeNewFilesReadOnly, Project project) {
         CompositeOperation operation = new CompositeOperation();
         for (String tagName : tagNames) {
-            operation.addOperation(new BranchOperation(selectedFiles, tagName, overrideExisting, true));
+            operation.addOperation(new BranchOperation(selectedFiles, tagName, overrideExisting));
         }
         if (switchToThisAction) {
             operation.addOperation(new UpdateOperation(selectedFiles, switchToTag, makeNewFilesReadOnly, project));
@@ -60,8 +58,7 @@ public class MultitagHandler {
         CompositeOperation operation = new CompositeOperation();
         boolean allowMoveDelete = overrideExisting;
         for (String branchName : branchNames) {
-            operation.addOperation(new BranchOperationEx(selectedFiles, branchName, overrideExisting, false,
-                    allowMoveDelete));
+            operation.addOperation(new BranchOperation(selectedFiles, branchName, overrideExisting));
         }
         if (switchToThisAction) {
             operation.addOperation(new UpdateOperation(selectedFiles, switchToBranch, makeNewFilesReadOnly, project));
@@ -70,13 +67,13 @@ public class MultitagHandler {
                 FileSetToBeUpdated.selectedFiles(selectedFiles));
     }
 
-    public static CvsHandler createTagsHandler(VirtualFile[] selectedFiles, Collection<String> tagNames,
+    public static CvsHandler createTagsHandler(FilePath[] selectedFiles, Collection<String> tagNames,
                                                boolean overrideExisting,
                                                boolean makeNewFilesReadOnly, Project project) {
         if (selectedFiles.length > 0) {
             CompositeOperation operation = new CompositeOperation();
             for (String tagName : tagNames) {
-                operation.addOperation(new BranchOperationEx(selectedFiles, tagName, overrideExisting, true));
+                operation.addOperation(new BranchOperation(selectedFiles, tagName, overrideExisting));
             }
             return new CommandCvsHandler(CvsBundle.message("operation.name.create.tag"),
                     operation,
@@ -86,7 +83,7 @@ public class MultitagHandler {
         }
     }
 
-    public static CvsHandler createRemoveTagsAction(VirtualFile[] selectedFiles, Collection<String> tagNames) {
+    public static CvsHandler createRemoveTagsAction(FilePath[] selectedFiles, Collection<String> tagNames) {
         CompositeOperation operation = new CompositeOperation();
         for (String tagName : tagNames) {
              operation.addOperation(new TagOperation(selectedFiles, tagName, true, false));

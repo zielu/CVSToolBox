@@ -41,7 +41,7 @@ public class MultitagHandler {
                                                boolean makeNewFilesReadOnly, Project project) {
         CompositeOperation operation = new CompositeOperation();
         for (String tagName : tagNames) {
-            operation.addOperation(new BranchOperation(selectedFiles, tagName, overrideExisting));
+            operation.addOperation(new TagOperation(selectedFiles, tagName, false, overrideExisting));
         }
         if (switchToThisAction) {
             operation.addOperation(new UpdateOperation(selectedFiles, switchToTag, makeNewFilesReadOnly, project));
@@ -73,7 +73,7 @@ public class MultitagHandler {
         if (selectedFiles.length > 0) {
             CompositeOperation operation = new CompositeOperation();
             for (String tagName : tagNames) {
-                operation.addOperation(new BranchOperation(selectedFiles, tagName, overrideExisting));
+                operation.addOperation(new TagOperation(selectedFiles, tagName, false, overrideExisting));
             }
             return new CommandCvsHandler(CvsBundle.message("operation.name.create.tag"),
                     operation,

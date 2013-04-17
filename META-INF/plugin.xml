@@ -24,13 +24,15 @@
         <li>'Create multiple tags' - context and after commit action</li>
         <li>'Create/Move branches' - context action</li>
         <li>'Delete tags' - context action</li>
+        <li>'Add module to CVS...' - prepares module for addition to CVS by creating 
+            required directory structure</li>
     </ol>
     <p>
     This plugin uses <a href="http://www.famfamfam.com/lab/icons/silk">FAMFAMFAM Silk Icons</a>
     </p>
     ]]>
     </description>
-    <version>1.4.7</version>
+    <version>1.4.8</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="122.519" until-build="129.9999"/>
     <!-- dependencies -->
@@ -56,14 +58,19 @@
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateTag"/>
         </action>
         <action id="CVSToolBox.CreateMoveMultiBranch" class="org.cvstoolbox.multitag.MultiBranchAction"
-                text="Create/Move Branches..." icon=""
+                text="Create/Move Branches..."
                 description="Create/move branches in CVS repository for file">
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.CreateBranch"/>
         </action>
         <action id="CVSToolBox.DeleteTags" class="org.cvstoolbox.multitag.DeleteTagsAction"
-                text="Delete Tags..." icon=""
+                text="Delete Tags..."
                 description="Delete tags in CVS repository for file">
             <add-to-group group-id="CvsActions" anchor="after" relative-to-action="Cvs.DeleteTag"/>
+        </action>
+        <action id="CVSToolBox.AddModule" class="org.cvstoolbox.addToCvs.AddModuleAction"
+                text="Add module to CVS..."
+                description="Add module to CVS repository">
+            <add-to-group group-id="VersionControlsGroup" anchor="last"/>
         </action>
     </actions>
 
@@ -74,6 +81,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.5.0</b>
+        <ol>
+          <li>'Import module into CVS...' context action</li>
+        </ol>
+      </li>
       <li><b>1.4.7</b>
         <ol>
           <li>Compatible with latest Idea 12.1 (129.+)</li>

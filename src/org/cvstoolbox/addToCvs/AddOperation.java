@@ -34,7 +34,7 @@ public class AddOperation extends CvsOperation {
 
     @Override
     public void appendSelfCvsRootProvider(@NotNull Collection<CvsEnvironment> roots) throws CannotFindCvsRootException {
-        //TODO: auto-generated method implementation
+        
     }
 
     @Override

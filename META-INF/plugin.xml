@@ -26,13 +26,16 @@
         <li>'Delete tags' - context action</li>
     </ol>
     <p>
+    You might also like <a href="http://plugins.jetbrains.com/plugin/6325">CVS Revision Graph Plus</a>
+    </p>
+    <p>
     This plugin uses <a href="http://www.famfamfam.com/lab/icons/silk">FAMFAMFAM Silk Icons</a>
     </p>
     ]]>
     </description>
-    <version>1.4.7</version>
+    <version>1.4.8</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="122.519" until-build="129.9999"/>
+    <idea-version since-build="122.519" until-build="130.9999"/>
     <!-- dependencies -->
     <depends>CVS</depends>
     <category>VCS Integration</category>
@@ -74,6 +77,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.4.8</b>
+        <ol>
+          <li>Compatible with latest Idea 13 EAP (130.+)</li>
+        </ol>
+      </li>
       <li><b>1.4.7</b>
         <ol>
           <li>Compatible with latest Idea 12.1 (129.+)</li>

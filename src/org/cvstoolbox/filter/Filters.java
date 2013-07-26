@@ -17,15 +17,18 @@
 
 package org.cvstoolbox.filter;
 
-import com.intellij.cvsSupport2.CvsUtil;
-import com.intellij.cvsSupport2.util.CvsVfsUtil;
-import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import com.intellij.cvsSupport2.CvsUtil;
+import com.intellij.cvsSupport2.CvsVcs2;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.AbstractVcs;
+import com.intellij.openapi.vcs.FilePath;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vfs.VirtualFile;
 
 /**
  * @author Łukasz Zieliński
@@ -60,5 +63,25 @@ public class Filters {
         }
         files.removeAll(toRemove);
         return files.toArray(new VirtualFile[files.size()]);
+    }
+    
+    public static VirtualFile[] pruneNotUnderCvs(Project project, VirtualFile[] toCheck) {
+        if (toCheck.length > 0) {
+            List<VirtualFile> underCvs = new ArrayList<VirtualFile>(toCheck.length);
+            
+            final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
+            final String cvsVcsName = CvsVcs2.getKey().getName();
+            for (VirtualFile file : toCheck) {
+                AbstractVcs vcs = vcsManager.getVcsFor(file);
+                if (vcs != null) {                    
+                    if (cvsVcsName.equals(vcs.getName())) {
+                        underCvs.add(file);                        
+                    }
+                }                
+            }
+            return underCvs.toArray(new VirtualFile[underCvs.size()]);            
+        } else {
+            return toCheck;
+        }
     }
 }

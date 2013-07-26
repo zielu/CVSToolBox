@@ -17,25 +17,24 @@
 
 package org.cvstoolbox.multitag.ui;
 
-import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
-import com.intellij.ui.components.JBScrollPane;
-import net.miginfocom.swing.MigLayout;
-import org.cvstoolbox.multitag.MultiTagConfiguration;
-import org.cvstoolbox.multitag.config.TagsConfig;
-import org.cvstoolbox.multitag.res.ResProvider;
-import org.jetbrains.annotations.NonNls;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collection;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collection;
+
+import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
+import net.miginfocom.swing.MigLayout;
+import org.cvstoolbox.multitag.MultiTagConfiguration;
+import org.cvstoolbox.multitag.config.TagsConfig;
+import org.cvstoolbox.multitag.res.ResProvider;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Łukasz Zieliński

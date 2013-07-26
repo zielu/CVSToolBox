@@ -17,6 +17,13 @@
 
 package org.cvstoolbox.multitag;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.intellij.cvsSupport2.CvsVcs2;
 import com.intellij.cvsSupport2.config.CvsConfiguration;
 import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutor;
@@ -31,10 +38,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.VcsKey;
-import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
-import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -45,13 +49,6 @@ import org.cvstoolbox.util.CvsHelper;
 import org.cvstoolbox.util.EDTInvoker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Łukasz Zieliński
@@ -65,7 +62,6 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
 
     @NotNull
     public CheckinHandler createVcsHandler(final CheckinProjectPanel panel) {
-        //TODO: z panelu mozna wyciagnac jakie pliki zostaly wybrane
         return new CheckinHandler() {
             private MultiTagCheckinPanel checkinPanel;
 
@@ -76,50 +72,57 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                 return checkinPanel;
             }
 
-            private void tagFiles(Collection<VirtualFile> files, final Project project) {
-                VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
-                final CvsHandler handler = MultitagHandler.createTagsHandler(
-                        CvsHelper.toFilePaths(toTag), checkinPanel.getTagNames(),
-                        checkinPanel.getOverrideExisting(),
-                        CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY, project);
-                if (handler != null) {
-                    final Task.Backgroundable task = new Task.Backgroundable(project,
-                            "CVS Create Tag", false, new PerformInBackgroundOption() {
-                                @Override
-                                public boolean shouldStartInBackground() {
-                                    return false;
-                                }
-
-                                @Override
-                                public void processSentToBackground() {
-                                }
-                            }) {
-                        private List<VcsException> errors = Collections.emptyList();
-
-                        public void run(@NotNull final ProgressIndicator indicator) {
-                            indicator.setIndeterminate(true);
+            private void tagFiles(final Collection<VirtualFile> files, final Project project) {
+                final Collection<String> tagNames = new ArrayList<String>(checkinPanel.getTagNames());
+                final boolean overrideExisting = checkinPanel.getOverrideExisting();
+                final boolean makeNewFilesReadOnly = CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY;                
+                final Task.Backgroundable task = new Task.Backgroundable(project,
+                        "CVS Create Tag", false, PerformInBackgroundOption.DEAF) {
+                    
+                    private List<VcsException> errors = Collections.emptyList();
+                    private boolean nothingToTag;
+                    
+                    public void run(@NotNull final ProgressIndicator indicator) {
+                        indicator.setIndeterminate(true);
+                        VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
+                        toTag = Filters.pruneNotUnderCvs(project, toTag);
+                        final CvsHandler handler = MultitagHandler.createTagsHandler(
+                            CvsHelper.toFilePaths(toTag), tagNames, overrideExisting, makeNewFilesReadOnly, project);
+                        if (handler != null) {
                             final CvsOperationExecutor executor = new CvsOperationExecutor(project);
-                            executor.performActionSync(handler, CvsOperationExecutorCallback.EMPTY);
-                            errors = executor.getResult().getErrors();
-                        }
-
-                        @Nullable
-                        public NotificationInfo getNotificationInfo() {
-                            String text = " Tags Created";
-                            if (errors.size() > 0) {
-                                text += ", " + errors.size() + " Tag(s) Failed To Create";
+                            boolean performedAction = false;
+                            if (!indicator.isCanceled()) {
+                                indicator.startNonCancelableSection();
+                                performedAction = true;
+                                executor.performActionSync(handler, CvsOperationExecutorCallback.EMPTY);
                             }
-                            return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", text, true);
-                        }
-                    };
+                            errors = executor.getResult().getErrors();
+                            if (performedAction) {
+                                indicator.finishNonCancelableSection();
+                            }
+                        } else {
+                            nothingToTag = true;
+                        }                        
+                    }
 
-                    EDTInvoker.invokeAndWaitNoExceptions(new Runnable() {
-                        @Override
-                        public void run() {
-                            ProgressManager.getInstance().run(task);
+                    @Nullable
+                    public NotificationInfo getNotificationInfo() {
+                        String text = " Tags Created";
+                        if (errors.size() == 0 && nothingToTag) {
+                            return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", "Nothing to tag", true);                            
+                        } else if (errors.size() > 0) {                            
+                            text += ", " + errors.size() + " Tag(s) Failed To Create";                            
                         }
-                    });
-                }
+                        return new NotificationInfo("CVS Create Tag", "CVS Tagging Finished", text, true);
+                    }
+                };
+
+                EDTInvoker.invokeAndWaitNoExceptions(new Runnable() {
+                    @Override
+                    public void run() {
+                        ProgressManager.getInstance().run(task);
+                    }
+                });
             }
 
             @Override

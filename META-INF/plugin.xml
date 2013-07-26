@@ -33,7 +33,7 @@
     </p>
     ]]>
     </description>
-    <version>1.4.8</version>
+    <version>1.4.9</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="122.519" until-build="130.9999"/>
     <!-- dependencies -->
@@ -77,6 +77,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.4.9</b>
+        <ol>
+          <li>Fixed issue ***</li>
+        </ol>
+      </li>
       <li><b>1.4.8</b>
         <ol>
           <li>Compatible with latest Idea 13 EAP (130.+)</li>

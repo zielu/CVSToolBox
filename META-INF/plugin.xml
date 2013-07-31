@@ -15,7 +15,7 @@
   ~ FAMFAMFAM Silk Icons http://www.famfamfam.com/lab/icons/silk
   -->
 
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://github.com/zielu/CVSToolBox">
     <name>CVSToolBox</name>
     <description>
     <![CDATA[
@@ -33,7 +33,7 @@
     </p>
     ]]>
     </description>
-    <version>1.4.8</version>
+    <version>1.4.9</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="122.519" until-build="130.9999"/>
     <!-- dependencies -->
@@ -79,7 +79,9 @@
     <ul>
       <li><b>1.4.9</b>
         <ol>
-          <li>Fixed issue ***</li>
+          <li>Do not tag files not under CVS</li>
+          <li>Do not tag locally added but not committed files</li>
+          <li>Do not tag locally deleted files</li>
         </ol>
       </li>
       <li><b>1.4.8</b>

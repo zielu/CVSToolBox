@@ -33,7 +33,7 @@
     </p>
     ]]>
     </description>
-    <version>1.4.9</version>
+    <version>1.4.8</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
     <idea-version since-build="122.519" until-build="130.9999"/>
     <!-- dependencies -->

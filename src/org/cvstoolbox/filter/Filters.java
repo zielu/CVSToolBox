@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.intellij.cvsSupport2.CvsUtil;
 import com.intellij.cvsSupport2.CvsVcs2;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.FilePath;
@@ -34,7 +35,7 @@ import com.intellij.openapi.vfs.VirtualFile;
  * @author Łukasz Zieliński
  */
 public class Filters {
-
+    private static final Logger LOG = Logger.getInstance(Filters.class.getName());
 
     public static FilePath[] pruneLocallyAdded(FilePath[] toPrune) {
         List<FilePath> paths = new ArrayList<FilePath>(Arrays.asList(toPrune));
@@ -73,11 +74,16 @@ public class Filters {
             final String cvsVcsName = CvsVcs2.getKey().getName();
             for (VirtualFile file : toCheck) {
                 AbstractVcs vcs = vcsManager.getVcsFor(file);
-                if (vcs != null) {                    
-                    if (cvsVcsName.equals(vcs.getName())) {
+                if (vcs != null) {
+                    String vcsName = vcs.getName();
+                    if (cvsVcsName.equals(vcsName)) {
                         underCvs.add(file);                        
+                    } else if (LOG.isDebugEnabled()) {
+                        LOG.debug("Pruned not under CVS ["+vcsName+"]: "+file.getUrl());                        
                     }
-                }                
+                } else if (LOG.isDebugEnabled()) {
+                    LOG.debug("Pruned not under and VCS: "+file.getUrl());    
+                }
             }
             return underCvs.toArray(new VirtualFile[underCvs.size()]);            
         } else {

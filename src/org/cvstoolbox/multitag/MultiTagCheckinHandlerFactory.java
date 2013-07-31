@@ -72,7 +72,7 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                 return checkinPanel;
             }
 
-            private void tagFiles(final Collection<VirtualFile> files, final Project project) {
+            private void tagFiles(final Collection<VirtualFile> files, final Project project) {                
                 final Collection<String> tagNames = new ArrayList<String>(checkinPanel.getTagNames());
                 final boolean overrideExisting = checkinPanel.getOverrideExisting();
                 final boolean makeNewFilesReadOnly = CvsConfiguration.getInstance(project).MAKE_NEW_FILES_READONLY;                
@@ -84,8 +84,18 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                     
                     public void run(@NotNull final ProgressIndicator indicator) {
                         indicator.setIndeterminate(true);
+                        if (LOG.isDebugEnabled()) {
+                            for (VirtualFile file : files) {
+                                LOG.debug("Tagging input file: "+file.getUrl());
+                            }
+                        }
                         VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
                         toTag = Filters.pruneNotUnderCvs(project, toTag);
+                        if (LOG.isDebugEnabled()) {
+                            for (VirtualFile file : toTag) {
+                                LOG.debug("Will tag file: "+file.getUrl());
+                            }
+                        }
                         final CvsHandler handler = MultitagHandler.createTagsHandler(
                             CvsHelper.toFilePaths(toTag), tagNames, overrideExisting, makeNewFilesReadOnly, project);
                         if (handler != null) {
@@ -134,6 +144,7 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                     configuration.setSelectedTags(tagNames);
 
                     List<VirtualFile> selectedFiles = new ArrayList<VirtualFile>(panel.getVirtualFiles());
+                    LOG.debug("Tagging after successful commit");
                     tagFiles(selectedFiles, project);
                 }
             }
@@ -155,6 +166,7 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                         }
                     }
                     if (!toTag.isEmpty()) {
+                        LOG.debug("Tagging after failed commit");
                         tagFiles(toTag.values(), panel.getProject());
                     }
                 }

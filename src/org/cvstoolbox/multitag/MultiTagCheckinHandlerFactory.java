@@ -24,6 +24,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.intellij.cvsSupport2.CvsVcs2;
 import com.intellij.cvsSupport2.config.CvsConfiguration;
 import com.intellij.cvsSupport2.cvsExecution.CvsOperationExecutor;
@@ -89,8 +92,9 @@ public class MultiTagCheckinHandlerFactory extends VcsCheckinHandlerFactory {
                                 LOG.debug("Tagging input file: "+file.getUrl());
                             }
                         }
-                        VirtualFile[] toTag = Filters.pruneEmptyDirectories(files);
-                        toTag = Filters.pruneNotUnderCvs(project, toTag);
+                        Predicate<VirtualFile> filter = Predicates.and(Filters.fileExistsInCvs(), Filters.keepNonEmptyDirectoriesAndFiles(), 
+                                Predicates.not(Filters.fileLocallyDeleted()));
+                        Iterable<VirtualFile> toTag = Iterables.filter(files, filter);                        
                         if (LOG.isDebugEnabled()) {
                             for (VirtualFile file : toTag) {
                                 LOG.debug("Will tag file: "+file.getUrl());

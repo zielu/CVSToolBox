@@ -17,15 +17,17 @@
 
 package org.cvstoolbox.util;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.FilePathImpl;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * @author Łukasz Zieliński
@@ -49,5 +51,13 @@ public class CvsHelper {
             paths[i] = new FilePathImpl(files[i]);
         }
         return paths;
+    }
+    
+    public static FilePath[] toFilePaths(Iterable<VirtualFile> files) {
+        List<FilePath> paths = Lists.newArrayListWithExpectedSize(100);
+        for (VirtualFile file : files) {
+            paths.add(new FilePathImpl(file));            
+        }
+        return paths.toArray(new FilePath[paths.size()]);
     }
 }

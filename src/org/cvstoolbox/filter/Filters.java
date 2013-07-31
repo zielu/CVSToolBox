@@ -17,19 +17,21 @@
 
 package org.cvstoolbox.filter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.cvsSupport2.CvsUtil;
 import com.intellij.cvsSupport2.CvsVcs2;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
-import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Łukasz Zieliński
@@ -37,55 +39,112 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class Filters {
     private static final Logger LOG = Logger.getInstance(Filters.class.getName());
 
-    public static FilePath[] pruneLocallyAdded(FilePath[] toPrune) {
-        List<FilePath> paths = new ArrayList<FilePath>(Arrays.asList(toPrune));
-        List<FilePath> toRemove = new ArrayList<FilePath>(paths.size());
-        for (FilePath path : paths) {
-            if (CvsUtil.fileIsLocallyAdded(path.getIOFile())) {
-                toRemove.add(path);
+    public static Predicate<VirtualFile> keepNonEmptyDirectoriesAndFiles() {
+        return new Predicate<VirtualFile>() {
+            @Override
+            public boolean apply(@Nullable VirtualFile file) {
+                if (file != null) {
+                    if (file.isDirectory()) {
+                        return file.getChildren().length == 1 && file.getChildren()[0].isDirectory() &&
+                            CvsUtil.CVS.equals(file.getChildren()[0].getName());
+                    }
+                    return true;
+                }
+                return false;
             }
-        }
-        paths.removeAll(toRemove);
-        return paths.toArray(new FilePath[paths.size()]);
+        };
     }
 
+    public static Predicate<VirtualFile> fileUnderCvsVcs(@NotNull final Project project) {
+        return new Predicate<VirtualFile>() {
+            private ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
+            
+            @Override
+            public boolean apply(@Nullable VirtualFile file) {
+                if (file != null) {
+                    boolean result;
+                    AbstractVcs vcs = vcsManager.getVcsFor(file);
+                    if (vcs != null) {
+                        String vcsName = vcs.getName();
+                        if (CvsVcs2.getKey().getName().equals(vcsName)) {
+                            result = true;
+                        } else {
+                            result = false;
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Not under CVS ["+vcsName+"]: "+file.getUrl());    
+                            }                            
+                        }
+                    } else {
+                        result = false;
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Not under any VCS: "+file.getUrl());
+                        }
+                    }
+                    return result;
+                }
+                return false;
+            }
+        };
+    } 
+
+    public static Predicate<VirtualFile> fileLocallyAdded() {
+        return new Predicate<VirtualFile>() {
+            @Override
+            public boolean apply(@Nullable VirtualFile file) {
+                if (file != null) {
+                    return CvsUtil.fileIsLocallyAdded(file);
+                } else {
+                    return false;
+                }
+            }
+        };
+    }
+    
+    public static Predicate<VirtualFile> fileExistsInCvs() {
+        return new Predicate<VirtualFile>() {
+            @Override
+            public boolean apply(@Nullable VirtualFile file) {
+                if (file != null) {
+                    boolean result = CvsUtil.fileExistsInCvs(file);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Exists in CVS ["+result+"]: "+file.getUrl());
+                    }
+                    return result;
+                } else {
+                    return false;
+                }
+            }
+        };
+    }
+    
+    public static Predicate<VirtualFile> fileLocallyDeleted() {
+        return new Predicate<VirtualFile>() {
+            @Override
+            public boolean apply(@Nullable VirtualFile file) {
+                if (file != null) {
+                    boolean result = CvsUtil.fileIsLocallyRemoved(file);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Locally deleted ["+result+"]: "+file.getUrl());
+                    }
+                    return result;    
+                } else {
+                    return false;
+                }
+            }
+        };
+    }
+    
     public static VirtualFile[] pruneEmptyDirectories(VirtualFile[] toPrune) {
         return pruneEmptyDirectories(Arrays.asList(toPrune));
     }
-
+           
     public static VirtualFile[] pruneEmptyDirectories(Collection<VirtualFile> toPrune) {
-        List<VirtualFile> files = new ArrayList<VirtualFile>(toPrune);
-        List<VirtualFile> toRemove = new ArrayList<VirtualFile>(files.size());
-        for (VirtualFile file : files) {
-            if (file.isDirectory() && file.getChildren().length == 1 && file.getChildren()[0].isDirectory() &&
-                    CvsUtil.CVS.equals(file.getChildren()[0].getName())) {
-                toRemove.add(file);
-            }
-        }
-        files.removeAll(toRemove);
-        return files.toArray(new VirtualFile[files.size()]);
+        return Lists.newArrayList(Iterables.filter(toPrune, keepNonEmptyDirectoriesAndFiles())).toArray(new VirtualFile[toPrune.size()]);        
     }
     
     public static VirtualFile[] pruneNotUnderCvs(Project project, VirtualFile[] toCheck) {
         if (toCheck.length > 0) {
-            List<VirtualFile> underCvs = new ArrayList<VirtualFile>(toCheck.length);
-            
-            final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
-            final String cvsVcsName = CvsVcs2.getKey().getName();
-            for (VirtualFile file : toCheck) {
-                AbstractVcs vcs = vcsManager.getVcsFor(file);
-                if (vcs != null) {
-                    String vcsName = vcs.getName();
-                    if (cvsVcsName.equals(vcsName)) {
-                        underCvs.add(file);                        
-                    } else if (LOG.isDebugEnabled()) {
-                        LOG.debug("Pruned not under CVS ["+vcsName+"]: "+file.getUrl());                        
-                    }
-                } else if (LOG.isDebugEnabled()) {
-                    LOG.debug("Pruned not under and VCS: "+file.getUrl());    
-                }
-            }
-            return underCvs.toArray(new VirtualFile[underCvs.size()]);            
+            return Lists.newArrayList(Iterables.filter(Arrays.asList(toCheck), fileUnderCvsVcs(project))).toArray(new VirtualFile[toCheck.length]);                       
         } else {
             return toCheck;
         }

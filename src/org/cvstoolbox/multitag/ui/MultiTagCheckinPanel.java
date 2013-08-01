@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
+import com.intellij.ui.JBColor;
 import net.miginfocom.swing.MigLayout;
 import org.cvstoolbox.multitag.MultiTagConfiguration;
 import org.cvstoolbox.multitag.config.TagsConfig;
@@ -53,6 +54,7 @@ public class MultiTagCheckinPanel implements RefreshableOnComponent {
         content = new JPanel(new BorderLayout());
         JPanel center = new JPanel(new MigLayout("fillx"));
         selectionError = new JLabel();
+        selectionError.setForeground(JBColor.red);
 
         center.add(selectionError, "spanx, wrap");
         tagsSelection.setAfterActionsComponent(myOverrideExisting);
@@ -78,7 +80,7 @@ public class MultiTagCheckinPanel implements RefreshableOnComponent {
 
     private void updateSelectionError() {
         if (tagsSelection.getTagNames().isEmpty() && tag.isSelected()) {
-            @NonNls final String text = "<html><font color='red'><b>none selected</b></font></html>";
+            @NonNls final String text = "<html><b>None selected</b></font></html>";
             selectionError.setText(text);
         } else {
             selectionError.setText("");

@@ -33,9 +33,9 @@
     </p>
     ]]>
     </description>
-    <version>1.4.9</version>
+    <version>1.4.10</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="122.519" until-build="130.9999"/>
+    <idea-version since-build="129.298" until-build="130.9999"/>
     <!-- dependencies -->
     <depends>CVS</depends>
     <category>VCS Integration</category>
@@ -77,6 +77,11 @@
     <change-notes>
     <![CDATA[
     <ul>
+      <li><b>1.4.10</b>
+        <ol>
+          <li>Darcula alignment</li>
+        </ol>
+      </li>
       <li><b>1.4.9</b>
         <ol>
           <li>Do not tag files not under CVS</li>

@@ -16,10 +16,11 @@
     </p>
     ]]>
     </description>
-    <version>1.4.12</version>
+    <version>1.4.13</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="134.1342" until-build="135.9999"/>
+    <idea-version since-build="138"/>
     <!-- dependencies -->
+    <depends>com.intellij.modules.platform</depends>
     <depends>CVS</depends>
     <category>VCS Integration</category>
 
@@ -58,9 +59,9 @@
         <vcsCheckinHandlerFactory implementation="org.cvstoolbox.multitag.MultiTagCheckinHandlerFactory"/>
     </extensions>
     <change-notes><![CDATA[
-      <h3>Changes in 1.4.12</h3>
+      <h3>Changes in 1.4.13</h3>
       <ul>
-        <li>Compatibility with Idea 13.1</li>
+        <li>Compatibility with Idea 14+</li>
       <ul>
       ]]>
   </change-notes>

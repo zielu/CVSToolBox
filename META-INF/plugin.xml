@@ -18,7 +18,7 @@
     </description>
     <version>1.4.13</version>
     <vendor url="https://github.com/zielu/CVSToolBox" email="cvstoolbox@gmail.com">Łukasz Zieliński</vendor>
-    <idea-version since-build="138"/>
+    <idea-version since-build="138.0000"/>
     <!-- dependencies -->
     <depends>com.intellij.modules.platform</depends>
     <depends>CVS</depends>
